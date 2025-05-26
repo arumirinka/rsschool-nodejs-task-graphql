@@ -18,12 +18,8 @@ export const MemberType = new GraphQLObjectType({
     profiles: {
       type: new GraphQLList(Profile),
       resolve: async (src, _args, context) => {
-        const res = await context.prisma.profile.findMany({
-          where: {
-            id: src.id,
-          },
-        });
-        return res;
+        const profile = await context.dataLoaders.profilesLoader.load(src.id);
+        return profile;
       },
     },
   }),
