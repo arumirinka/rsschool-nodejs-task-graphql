@@ -38,37 +38,37 @@ export const useDataLoaders = (prisma: PrismaClient) => ({
   subscribedToUserLoader: new DataLoader(async (ids: readonly string[]) => {
     const usersDB = await prisma.user.findMany({
       where: {
-        id: {
-          in: Array.from(ids),
-        },
-      },
-      include: {
-        subscribedToUser: {
-          select: {
-            subscriber: true,
+        userSubscribedTo: {
+          some: {
+            authorId: {
+              in: Array.from(ids),
+            },
           },
         },
       },
+      include: {
+        userSubscribedTo: true,
+      },
     });
-    const users = ids.map(id => usersDB.filter(user => user.subscribedToUser.some(el => el.subscriber.id === id)));
+    const users = ids.map(id => usersDB.filter(user => user.userSubscribedTo.some(el => el.authorId === id)));
     return users;
   }),
   userSubscribedToLoader: new DataLoader(async (ids: readonly string[]) => {
     const usersDB = await prisma.user.findMany({
       where: {
-        id: {
-          in: Array.from(ids),
-        },
-      },
-      include: {
-        userSubscribedTo: {
-          select: {
-            author: true,
+        subscribedToUser: {
+          some: {
+            subscriberId: {
+              in: Array.from(ids),
+            },
           },
         },
       },
+      include: {
+        subscribedToUser: true,
+      },
     });
-    const users = ids.map(id => usersDB.filter(user => user.userSubscribedTo.some(el => el.author.id === id)));
+    const users = ids.map(id => usersDB.filter(user => user.subscribedToUser.some(el => el.subscriberId === id)));
     return users;
   }),
 });
