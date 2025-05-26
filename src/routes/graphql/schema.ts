@@ -7,7 +7,7 @@ import { UUIDType } from "./types/uuid.js";
 
 const query = new GraphQLObjectType({
   name: "Query",
-  fields: {
+  fields: () => ({
     memberTypes: {
       type: new GraphQLList(MemberType),
       resolve: async (_, _args, context) => {
@@ -100,7 +100,7 @@ const query = new GraphQLObjectType({
         return profile;
       },
     },
-  },
+  }),
 });
 
 export const schema = new GraphQLSchema({
